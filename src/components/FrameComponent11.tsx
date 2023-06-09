@@ -1,6 +1,5 @@
-import React, { FunctionComponent } from "react";
+import { FunctionComponent } from "react";
 import styles from "./FrameComponent11.module.css";
-
 const FrameComponent11: FunctionComponent = () => {
   return (
     <div className={styles.frameParent}>

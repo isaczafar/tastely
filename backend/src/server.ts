@@ -1,71 +1,68 @@
-import express from "express"
-import { Database } from "./database"
-import { Recipe } from "../models/Recipe"
-import { User } from "../models/User"
-import dotenv from "dotenv"
-import { Sequelize } from "sequelize"
-import cors from "cors"
+import express from 'express';
+import { Database } from './database';
+import { Recipe } from '../models/Recipe';
+import { User } from '../models/User';
+import dotenv from 'dotenv';
+import { Sequelize } from 'sequelize';
+import cors from 'cors';
 
-dotenv.config()
+dotenv.config();
 
-const app = express()
-const port = process.env.PORT || 8080
+const app = express();
+const port = process.env.PORT || 8080;
 
-const database = new Database()
-;(async () => await database.connect())()
+const database = new Database();
+(async () => await database.connect())();
 
 const sequelize = new Sequelize(process.env.DATABASEURL!, {
-  dialect: "postgres",
+  dialect: 'postgres',
   ssl: true,
-})
+});
 
-app.use(express.json())
-app.use(cors())
+app.use(express.json());
+app.use(cors());
 
-const authenticateUser = async (
-  req: express.Request,
-  res: express.Response,
-  next: express.NextFunction
-) => {
+const authenticateUser = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
   try {
-    next()
+    next();
   } catch (error) {
-    console.error(error)
-    res.status(401).json({ error: "Unauthorized" })
+    console.error(error);
+    res.status(401).json({ error: 'Unauthorized' });
   }
-}
+};
 
-app.get("/", async (req, res) => {
-  res.send("Hello, World!")
-})
+app.get('/', async (req, res) => {
+  res.send('Hello, World!');
+});
 
-app.get("/recipe", async (req, res) => {
+app.get('/recipe', async (req, res) => {
   try {
-    const recipes = await Recipe.findAll()
-    res.json(recipes)
+    const recipes = await Recipe.findAll();
+    res.json(recipes);
   } catch (error) {
-    console.error(error)
-    res.status(500).json({ error: "Internal server error" })
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
   }
-})
+});
 
-app.get("/recipe/:id", async (req, res) => {
+app.get('/recipe/:id', async (req, res) => {
   try {
-    const recipeId = parseInt(req.params.id)
-    const recipe = await Recipe.findByPk(recipeId)
+    const recipeId = parseInt(req.params.id);
+    const recipe = await Recipe.findByPk(recipeId);
 
     if (!recipe) {
-      res.status(404).json({ error: "Recipe not found" })
+      res.status(404).json({ error: 'Recipe not found' });
     } else {
-      res.json(recipe)
+      res.json(recipe);
     }
   } catch (error) {
-    console.error(error)
-    res.status(500).json({ error: "Internal server error" })
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
   }
-})
+});
 
-app.post("/recipe", authenticateUser, async (req, res) => {
+
+app.post('/recipe', authenticateUser, async (req, res) => {
   try {
     const {
       name,
@@ -76,7 +73,7 @@ app.post("/recipe", authenticateUser, async (req, res) => {
       servings,
       image,
       creator,
-    } = req.body
+    } = req.body;
 
     const recipe = await Recipe.create({
       name,
@@ -87,67 +84,68 @@ app.post("/recipe", authenticateUser, async (req, res) => {
       servings,
       image,
       creator,
-    })
+    });
 
-    res.json(recipe)
+    res.json(recipe);
   } catch (error) {
-    console.error(error)
-    res.status(500).json({ error: "Internal server error" })
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
   }
-})
+});
 
-app.post("/register", async (req, res) => {
+app.post('/register', async (req, res) => {
   try {
-    const { name, email, password } = req.body
-    const existingUser = await User.findOne({ where: { email } })
+    const { name, email, password } = req.body;
+    const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
-      return res.status(409).json({ error: "User already exists" })
+      return res.status(409).json({ error: 'User already exists' });
     }
 
-    const user = await User.create({ name, email, password })
+    const user = await User.create({ name, email, password });
 
-    res.json(user)
+    res.json(user);
   } catch (error) {
-    console.error(error)
-    res.status(500).json({ error: "Internal server error" })
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
   }
-})
+});
 
-app.post("/logout", authenticateUser, (req, res) => {
-  res.json({ message: "Logout successful" })
-})
+app.post('/logout', authenticateUser, (req, res) => {
+  res.json({ message: 'Logout successful' });
+});
 
-app.get("/check-login-status", authenticateUser, (req, res) => {
+app.get('/check-login-status', authenticateUser, (req, res) => {
   try {
-    const isLoggedIn = req.user !== undefined
+    const isLoggedIn = req.user !== undefined;
 
-    res.json({ isLoggedIn })
+    res.json({ isLoggedIn });
   } catch (error) {
-    console.error("Error checking login status:", error)
-    res.status(500).json({ error: "Internal server error" })
+    console.error('Error checking login status:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
-})
+});
 
-app.post("/login", async (req, res) => {
+
+app.post('/login', async (req, res) => {
   try {
-    const { email, password } = req.body
-    const user = await User.findOne({ where: { email } })
+    const { email, password } = req.body;
+    const user = await User.findOne({ where: { email } });
 
     if (!user) {
-      return res.status(404).json({ error: "User not found" })
+      return res.status(404).json({ error: 'User not found' });
     }
 
     if (user.password !== password) {
-      return res.status(401).json({ error: "Incorrect password" })
+      return res.status(401).json({ error: 'Incorrect password' });
     }
 
-    res.json({ message: "Login successful", user })
+    res.json({ message: 'Login successful', user });
   } catch (error) {
-    console.error(error)
-    res.status(500).json({ error: "Internal server error" })
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
   }
-})
+});
 
 app.listen(port, () => {
-  console.log(`Server is running on port ${port}`)
-})
+  console.log(`Server is running on port ${port}`);
+});
