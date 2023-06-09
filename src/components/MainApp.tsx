@@ -32,9 +32,7 @@ const MainApp: React.FC = () => {
   return (
     <div className="main-app">
       <div className="recipe-cards-container">
-        {recipes.map((recipe) => (
-          <RecipeCard key={recipe.id} recipe={recipe} />
-        ))}
+        
       </div>
     </div>
   );
