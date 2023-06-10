@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host",
-    "build": "yarn install && vite build",
+    "build": "tsc && vite build",
     "preview": "vite preview",
-    "start": "yarn start"
+    "start": "vite"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.4.0",

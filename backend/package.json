@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "yarn start",
-    "build": "yarn install && tsc",
+    "start": "node dist/src/server.js",
+    "build": "tsc",
     "dev": "ts-node-dev --no-notify --transpile-only --ignore-watch node_modules src/server.ts"
   },
   "keywords": [],
@@ -24,8 +24,7 @@
     "passport-local": "^1.0.0",
     "pg": "^8.11.0",
     "sequelize": "^6.31.1",
-    "ts-node-dev": "^2.0.0",
-    "yarn": "^1.22.19"
+    "ts-node-dev": "^2.0.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
